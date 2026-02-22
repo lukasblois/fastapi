@@ -7,14 +7,14 @@ services:
         ports:
             - 80:8000
         environment:
-            - database_hostname=${database_hostname}
-            - database_port=${database_port}
-            - database_password=${database_password}
-            - database_name=${database_name}
-            - database_username=${database_username}
-            - secret_key=${secret_key}
-            - algorithm=${algorithm}
-            - access_token_expire_minutes=${access_token_expire_minutes}
+            - DATABASE_HOSTNAME=${database_hostname}
+            - DATABASE_PORT=${database_port}
+            - DATABASE_PASSWORD=${database_password}
+            - DATABASE_NAME=${database_name}
+            - DATABASE_USERNAME=${database_username}
+            - SECRET_KEY=${secret_key}
+            - ALGORITHM=${algorithm}
+            - ACCESS_TOKEN_EXPIRE_MINUTES=${access_token_expire_minutes}
 
     postgres:
         image: postgres
