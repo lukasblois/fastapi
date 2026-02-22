@@ -4,7 +4,7 @@ on: [push, pull_request]
 
 jobs:
   job1:
-    environemt:
+    environment:
       name: testing
     env:
       database_hostname: ${{ secrets.DATABASE_HOSTNAME }}
