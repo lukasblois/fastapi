@@ -12,7 +12,7 @@ services:
         environment:
             - DATABASE_HOSTNAME=postgres
             - DATABASE_PORT=5432
-            - DATABASE_PASSWORD=#pi3.1415
+            - DATABASE_PASSWORD=password123
             - DATABASE_NAME=fastapi
             - DATABASE_USERNAME=postgres
             - SECRET_KEY=O0xgalEUTGvDNgoArVxndbzexqpCR2mQ
@@ -29,6 +29,7 @@ services:
 
         volumes:
             - postgres-db:/var/lib/postgresql
+            - ./init-db:/docker-entrypoint-initdb.d
 
 volumes:
     postgres-db:
