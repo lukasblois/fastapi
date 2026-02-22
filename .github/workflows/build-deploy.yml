@@ -7,21 +7,21 @@ jobs:
     environment:
       name: testing
     env:
-      database_hostname: ${{ secrets.DATABASE_HOSTNAME }}
-      database_port: ${{ secrets.DATABASE_PORT }}
-      database_password: ${{ secrets.DATABASE_PASSWORD }}
-      database_name: ${{ secrets.DATABASE_NAME }}
-      database_username: ${{ secrets.DATABASE_USERNAME }}
-      secret_key: ${{ secrets.SECRET_KEY }}
-      algorithm: ${{ secrets.ALGORITHM }}
-      access_token_expire_minutes: ${{ secrets.ACCESS_TOKEN_EXPIRE_MINUTES }}
+      database_hostname: postgres
+      database_port: "5432"
+      database_password: password123
+      database_name: fastapi
+      database_username: postgres
+      secret_key: O0xgalEUTGvDNgoArVxndbzexqpCR2mQ
+      algorithm: HS256
+      access_token_expire_minutes: "30"
 
     services: 
       postgres:
         image: postgres
         env:
-          POSTGRES_PASSWORD: ${{ secrets.DATABASE_PASSWORD }}
-          POSTGRES_DB: ${{ secrets.DATABASE_NAME }}_test
+          POSTGRES_PASSWORD: password123
+          POSTGRES_DB: fastapi_test
         ports:
           - 5432:5432
         options:
