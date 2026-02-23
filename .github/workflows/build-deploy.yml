@@ -7,21 +7,21 @@ jobs:
     environment:
       name: testing
     env:
-      database_hostname: {{secrets.DATABASE_HOSTNAME}}
-      database_port: {{secrets.DATABASE_PORT}}
-      database_password: {{secrets.DATABASE_PASSWORD}}
-      database_name: {{secrets.DATABASE_NAME}}
-      database_username: {{secrets.DATABASE_USERNAME}}
-      secret_key: {{secrets.SECRET_KEY}}
-      algorithm: {{secrets.ALGORITHM}}
-      access_token_expire_minutes: {{secrets.ACCESS_TOKEN_EXPIRE_MINUTES}}
+      database_hostname: ${{secrets.DATABASE_HOSTNAME}}
+      database_port: ${{secrets.DATABASE_PORT}}
+      database_password: ${{secrets.DATABASE_PASSWORD}}
+      database_name: ${{secrets.DATABASE_NAME}}
+      database_username: ${{secrets.DATABASE_USERNAME}}
+      secret_key: ${{secrets.SECRET_KEY}}
+      algorithm: ${{secrets.ALGORITHM}}
+      access_token_expire_minutes: ${{secrets.ACCESS_TOKEN_EXPIRE_MINUTES}}
 
     services: 
       postgres:
         image: postgres:17.2
         env:
-          POSTGRES_PASSWORD: {{secrets.DATABASE_PASSWORD}}
-          POSTGRES_DB: {{secrets.DATABASE_NAME}}_test
+          POSTGRES_PASSWORD: ${{secrets.DATABASE_PASSWORD}}
+          POSTGRES_DB: ${{secrets.DATABASE_NAME}}_test
         ports:
           - 5432:5432
         options:
