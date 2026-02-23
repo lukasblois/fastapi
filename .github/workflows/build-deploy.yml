@@ -18,7 +18,7 @@ jobs:
 
     services: 
       postgres:
-        image: postgres
+        image: postgres:17.2
         env:
           POSTGRES_PASSWORD: password123
           POSTGRES_DB: fastapi_test
@@ -66,9 +66,15 @@ jobs:
       #     cache-to: type=gha,mode=max
 
   deploy:
-    runs-on: ubuntu-latest
-    needs: [build]
-
-    steps:
-      - name: deploying stuff
-        run: echo 'going to deploy some stuff'
+  environment:
+    name: production
+  runs-on: ubuntu-latest
+  steps:
+    - name: pulling git repo
+      uses: actions/checkout@v6
+    - name: deploy to render
+      uses: JorgeLNJunior/render-deploy@v1.5.0
+      with:
+        service_id: ${{ secrets.RENDER_SERVICE_ID }}
+        api_key: ${{ secrets.RENDER_API_KEY }}
+        wait_deploy: true
