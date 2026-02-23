@@ -1,14 +1,13 @@
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi import FastAPI
 from .routers import post, user, auth, vote
+from config import settings
 
 app = FastAPI()
 
-origins = ["*"]
-
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
+    allow_origins=settings.allow_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -23,4 +22,4 @@ app.include_router(vote.router)
 
 @app.get("/")
 def root():
-    return {"message": "Successfully pushed to Render For Sure!!"}
+    return {"message": "Welcome to my API"}
