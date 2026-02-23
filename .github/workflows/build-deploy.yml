@@ -66,15 +66,15 @@ jobs:
       #     cache-to: type=gha,mode=max
 
   deploy:
-  environment:
-    name: production
-  runs-on: ubuntu-latest
-  steps:
-    - name: pulling git repo
-      uses: actions/checkout@v6
-    - name: deploy to render
-      uses: JorgeLNJunior/render-deploy@v1.5.0
-      with:
-        service_id: ${{ secrets.RENDER_SERVICE_ID }}
-        api_key: ${{ secrets.RENDER_API_KEY }}
-        wait_deploy: true
+    environment:
+      name: production
+    runs-on: ubuntu-latest
+    steps:
+      - name: pulling git repo
+        uses: actions/checkout@v6
+      - name: deploy to render
+        uses: JorgeLNJunior/render-deploy@v1.5.0
+        with:
+          service_id: ${{ secrets.RENDER_SERVICE_ID }}
+          api_key: ${{ secrets.RENDER_API_KEY }}
+          wait_deploy: true
