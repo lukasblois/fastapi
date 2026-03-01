@@ -14,6 +14,12 @@ class Settings(BaseSettings):
     access_token_expire_minutes: int
     allow_origins: List[str] = ["https://localhost:8000",
                                 "https://fastapi-l3f5.onrender.com/"]
+    limit_global: str
+    limit_users_create: str
+    limit_posts_create: str
+    limit_posts_delete: str
+    limit_vote: str
+    limit_password_reset: str
 
     model_config = ConfigDict(env_file=".env", extra="ignore")
 

@@ -37,12 +37,15 @@ def client(session):
             session.close()
 
     app.dependency_overrides[get_db] = override_get_db
+
+    app.state.limiter.enabled = False
+
     yield TestClient(app)
 
 
 @pytest.fixture()
 def test_user(client):
-    user_data = {'email': 'example@gmail.com', 'password': 'password123'}
+    user_data = {'email': 'example@gmail.com', 'password': 'ComplexPass1492!'}
     res = client.post("/users", json=user_data)
     assert res.status_code == 201
     new_user = res.json()
@@ -52,7 +55,7 @@ def test_user(client):
 
 @pytest.fixture()
 def test_user_2(client):
-    user_data = {'email': 'example2@gmail.com', 'password': 'password123'}
+    user_data = {'email': 'example2@gmail.com', 'password': 'ComplexPass1492!'}
     res = client.post("/users", json=user_data)
     assert res.status_code == 201
     new_user = res.json()
