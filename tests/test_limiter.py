@@ -1,12 +1,21 @@
+import pytest
 from app.main import app
 from app.limiter import limiter
 from app.config import settings
 from app.utils import get_limit_count
 
 
-def test_password_reset_rate_limit(authorized_client, test_user):
+@pytest.fixture
+def api_limiter():
+    original_state = app.state.limiter.enabled
     app.state.limiter.enabled = True
     limiter.reset()
+    yield
+    app.state.limiter.enabled = original_state
+    limiter.reset()
+
+
+def test_password_reset_rate_limit(authorized_client, test_user, api_limiter):
     limit = get_limit_count(settings.limit_password_reset)
     payload = {
         "old_password": "ComplexPass1492!",
@@ -14,28 +23,23 @@ def test_password_reset_rate_limit(authorized_client, test_user):
     }
 
     for _ in range(limit):
-        authorized_client.put("/users/password-reset", json=payload)
+        res = authorized_client.put("/users/password-reset", json=payload)
+        assert res.status_code != 429
 
     res = authorized_client.put("/users/password-reset", json=payload)
     assert res.status_code == 429
-    app.state.limiter.enabled = False
 
 
-def test_global_rate_limit(client):
-    app.state.limiter.enabled = True
-    limiter.reset()
+def test_global_rate_limit(client, api_limiter):
     limit = get_limit_count(settings.limit_global)
 
     for _ in range(limit):
         assert client.get("/").status_code == 200
 
     assert client.get("/").status_code == 429
-    app.state.limiter.enabled = False
 
 
-def test_create_user_rate_limit(client):
-    app.state.limiter.enabled = True
-    limiter.reset()
+def test_create_user_rate_limit(client, api_limiter):
     limit = get_limit_count(settings.limit_users_create)
 
     for i in range(limit):
@@ -46,12 +50,9 @@ def test_create_user_rate_limit(client):
     user_data = {'email': 'limit_fail@gmail.com',
                  'password': 'ComplexPass1492!'}
     assert client.post("/users", json=user_data).status_code == 429
-    app.state.limiter.enabled = False
 
 
-def test_create_post_rate_limit(authorized_client):
-    app.state.limiter.enabled = True
-    limiter.reset()
+def test_create_post_rate_limit(authorized_client, api_limiter):
     limit = get_limit_count(settings.limit_posts_create)
 
     for i in range(limit):
@@ -62,12 +63,9 @@ def test_create_post_rate_limit(authorized_client):
     res = authorized_client.post(
         "/posts", json={"title": "fail", "content": "fail"})
     assert res.status_code == 429
-    app.state.limiter.enabled = False
 
 
-def test_delete_post_rate_limit(authorized_client, test_posts):
-    app.state.limiter.enabled = True
-    limiter.reset()
+def test_delete_post_rate_limit(authorized_client, test_posts, api_limiter):
     limit = get_limit_count(settings.limit_posts_delete)
     post_id = test_posts[0].id
 
@@ -76,12 +74,9 @@ def test_delete_post_rate_limit(authorized_client, test_posts):
 
     res = authorized_client.delete(f"/posts/{post_id}")
     assert res.status_code == 429
-    app.state.limiter.enabled = False
 
 
-def test_vote_rate_limit(authorized_client, test_posts):
-    app.state.limiter.enabled = True
-    limiter.reset()
+def test_vote_rate_limit(authorized_client, test_posts, api_limiter):
     limit = get_limit_count(settings.limit_vote)
     post_id = test_posts[0].id
 
@@ -92,12 +87,9 @@ def test_vote_rate_limit(authorized_client, test_posts):
 
     res = authorized_client.post("/vote", json={"post_id": post_id, "dir": 1})
     assert res.status_code == 429
-    app.state.limiter.enabled = False
 
 
-def test_limiter_reset_after_window(client):
-    app.state.limiter.enabled = True
-    limiter.reset()
+def test_limiter_reset_manually(client, api_limiter):
     limit = get_limit_count(settings.limit_global)
 
     for _ in range(limit):
@@ -107,4 +99,3 @@ def test_limiter_reset_after_window(client):
 
     limiter.reset()
     assert client.get("/").status_code == 200
-    app.state.limiter.enabled = False
