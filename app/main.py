@@ -13,25 +13,15 @@ app = FastAPI()
 app.state.limiter = limiter
 
 
-@app.exception_handler(RateLimitExceeded)
-async def rate_limit_exceeded_handler(request: Request, exc: RateLimitExceeded):
+def custom_rate_limit_handler(request: Request, exc: RateLimitExceeded):
+    from fastapi.responses import JSONResponse
     return JSONResponse(
-        status_code=status.HTTP_429_TOO_MANY_REQUESTS,
-        content={"error": f"Rate limit exceeded: {exc.detail}"},
+        status_code=429,
+        content="Too many requests, please try again later."
     )
 
 
-@app.exception_handler(ValueError)
-async def value_error_handler(request: Request, exc: ValueError):
-    if "rate limit" in str(exc).lower():
-        return JSONResponse(
-            status_code=status.HTTP_429_TOO_MANY_REQUESTS,
-            content={"error": f"Rate limit exceeded: {str(exc)}"},
-        )
-    return JSONResponse(
-        status_code=status.HTTP_400_BAD_REQUEST,
-        content={"error": str(exc)},
-    )
+app.add_exception_handler(RateLimitExceeded, custom_rate_limit_handler)
 
 app.add_middleware(SlowAPIMiddleware)
 
