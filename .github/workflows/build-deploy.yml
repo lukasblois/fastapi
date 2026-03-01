@@ -21,6 +21,7 @@ jobs:
       limit_posts_delete: ${{secrets.LIMIT_POSTS_DELETE}}
       limit_vote: ${{secrets.LIMIT_VOTE}}
       limit_password_reset: ${{secrets.LIMIT_PASSWORD_RESET}}
+      TESTING: "True"
 
     services: 
       postgres:

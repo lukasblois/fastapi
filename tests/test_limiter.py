@@ -17,16 +17,20 @@ def api_limiter():
 
 def test_password_reset_rate_limit(authorized_client, test_user, api_limiter):
     limit = get_limit_count(settings.limit_password_reset)
-    payload = {
-        "old_password": "ComplexPass1492!",
-        "new_password": "AlternativePass2026!"
-    }
+    current_pw = "ComplexPass1492!"
 
-    for _ in range(limit):
+    for i in range(limit):
+        new_pw = f"AlternativePass{i*7}!"
+        payload = {
+            "old_password": current_pw,
+            "new_password": new_pw
+        }
         res = authorized_client.put("/users/password-reset", json=payload)
-        assert res.status_code != 429
+        assert res.status_code == 200
+        current_pw = new_pw
 
-    res = authorized_client.put("/users/password-reset", json=payload)
+    res = authorized_client.put("/users/password-reset", json={
+                                "old_password": "ComplexPass1492!", "new_password": "AlternativePass999!"})
     assert res.status_code == 429
 
 
@@ -70,7 +74,8 @@ def test_delete_post_rate_limit(authorized_client, test_posts, api_limiter):
     post_id = test_posts[0].id
 
     for _ in range(limit):
-        authorized_client.delete(f"/posts/{post_id}")
+        res = authorized_client.delete(f"/posts/{post_id}")
+        assert res.status_code != 429
 
     res = authorized_client.delete(f"/posts/{post_id}")
     assert res.status_code == 429
@@ -80,10 +85,12 @@ def test_vote_rate_limit(authorized_client, test_posts, api_limiter):
     limit = get_limit_count(settings.limit_vote)
     post_id = test_posts[0].id
 
-    for _ in range(limit):
+    for i in range(limit):
+        direction = 1 if i % 2 == 0 else 0
         res = authorized_client.post(
-            "/vote", json={"post_id": post_id, "dir": 1})
-        assert res.status_code in [201, 409]
+            "/vote", json={"post_id": post_id, "dir": direction})
+
+        assert res.status_code in [201, 204]
 
     res = authorized_client.post("/vote", json={"post_id": post_id, "dir": 1})
     assert res.status_code == 429
