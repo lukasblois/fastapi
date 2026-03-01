@@ -15,6 +15,12 @@ jobs:
       secret_key: ${{secrets.SECRET_KEY}}
       algorithm: ${{secrets.ALGORITHM}}
       access_token_expire_minutes: ${{secrets.ACCESS_TOKEN_EXPIRE_MINUTES}}
+      limit_global: ${{secrets.LIMIT_GLOBAL}}
+      limit_users_create: ${{secrets.LIMIT_USERS_CREATE}}
+      limit_posts_create: ${{secrets.LIMIT_POSTS_CREATE}}
+      limit_posts_delete: ${{secrets.LIMIT_POSTS_DELETE}}
+      limit_vote: ${{secrets.LIMIT_VOTE}}
+      limit_password_reset: ${{secrets.LIMIT_PASSWORD_RESET}}
 
     services: 
       postgres:
