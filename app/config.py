@@ -13,6 +13,7 @@ class Settings(BaseSettings):
     algorithm: str
     access_token_expire_minutes: int
     allow_origins: List[str] = ["https://localhost:8000",
+                                "http://localhost:8000",
                                 "https://fastapi-l3f5.onrender.com/"]
     limit_global: str
     limit_users_create: str
